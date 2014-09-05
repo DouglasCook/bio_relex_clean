@@ -42,7 +42,6 @@ def classify_remaining(optimise_params=False, no_biotext=False):
     # set up feature extractor with desired parameters
     f_extractor = FeatureExtractor()
     # set up classifier with link to feature extractor
-    #clf = Classifier(f_extractor, optimise_params, no_biotext)
     clf = SVMpoly(f_extractor, use_db=True, optimise_params=optimise_params, no_biotext=no_biotext)
 
     with sqlite3.connect(db_path) as db:

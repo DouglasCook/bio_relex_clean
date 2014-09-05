@@ -28,7 +28,7 @@ def load_records(orig_only):
     Load original and new data sets
     """
     if orig_only:
-        with sqlite3.connect('database/euadr_biotext_no_accents.db') as db:
+        with sqlite3.connect('database/euadr_biotext.db') as db:
             # using Row as row factory means can reference fields by name instead of index
             db.row_factory = sqlite3.Row
             cursor = db.cursor()
@@ -272,7 +272,7 @@ def pickle_similarities(orig_only, bag_of_words):
         extractor = FeatureExtractor(word_gap=False, count_dict=False, phrase_count=False, pos=False, combo=True,
                                      entity_type=True, word_features=False, bag_of_words=True, bigrams=True)
         if orig_only:
-            f_name = 'pickles/orig_no_accents_similarities_bag_of_words.p'
+            f_name = 'pickles/orig_similarities_bag_of_words.p'
         else:
             f_name = 'pickles/similarities_bag_of_words.p'
 
@@ -286,7 +286,7 @@ def pickle_similarities(orig_only, bag_of_words):
         #extractor = FeatureExtractor(word_gap=False, count_dict=False, phrase_count=False, word_features=True)
         '''
         if orig_only:
-            f_name = 'pickles/orig_no_accents_similarities_features_only.p'
+            f_name = 'pickles/orig_similarities_features_only.p'
         else:
             f_name = 'pickles/similarities_features_only.p'
 

@@ -171,6 +171,7 @@ def create_input_file():
 
 def drug_disorder_only():
     """
+    For the EU-ADR corpus
     Extract drug-disorder relations from relevant sentences and leave the rest
     """
     with open('csv/relevant_sentences.csv', 'rb') as csv_in:

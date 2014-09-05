@@ -1,17 +1,14 @@
 import csv  # used for accessing data held in CSV format
 import re  # regular expressions for extracting named entities
 
-from eu_adr.app import utility
-import preprocessing
+import nltk
 
 
 def pos_tags():
     """ Create new CSV containing all relevant sentences """
-    # set filepath to input
-    filepath = utility.build_filepath(__file__, '../../data/biotext/sentences_with_roles_and_relations.txt')
-    file_out = utility.build_filepath(__file__, '../biotext/sentences_POS.csv')
-    print filepath
-    print file_out
+    # this is the file from the BioText website
+    filepath = '../../data/biotext/sentences_with_roles_and_relations.txt'
+    file_out = '../biotext/sentences_POS.csv'
 
     with open(filepath, 'r') as f_in:
         with open(file_out, 'wb') as csv_out:
@@ -26,15 +23,15 @@ def pos_tags():
 
                 # only looking at treatment and disease sentences for now
                 if line[1] == 'TREAT_FOR_DIS':
-                    csv_writer.writerow([line[1], line[0], preprocessing.clean_and_tag_sentence(line[0])])
+                    csv_writer.writerow([line[1], line[0], clean_and_tag_sentence(line[0])])
 
 
 def entity_extraction():
     """
     Remove tags from sentences and record start and end points of entities
     """
-    f_in = utility.build_filepath(__file__, 'csv/sentences.csv')
-    f_out = utility.build_filepath(__file__, 'csv/sentences_entities.csv')
+    f_in = 'csv/sentences.csv'
+    f_out = 'csv/sentences_entities.csv'
 
     with open(f_in, 'rb')as csv_in:
         with open(f_out, 'wb')as csv_out:
@@ -126,6 +123,18 @@ def locate_entities(e_type, sentence):
         end -= 9
 
     return sentence, entity, start, end
+
+
+def clean_and_tag_sentence(sentence):
+    """
+    Clean and tag sentence, return POS tags
+    """
+    # clean up html tags
+    plaintext = nltk.clean_html(sentence)
+    tokens = nltk.word_tokenize(plaintext)
+    tags = nltk.pos_tag(tokens)
+
+    return tags
 
 
 if __name__ == '__main__':

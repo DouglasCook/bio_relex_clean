@@ -4,6 +4,7 @@ from tagger import TaggerChunker
 
 from reuters_NER import ontologies_api_demo as ner
 
+# path to database to be used must be set here
 db_path = 'database/test.db'
 
 

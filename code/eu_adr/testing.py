@@ -1,18 +1,4 @@
-import sqlite3
-import operator
-import pickle
-
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.spatial import distance
-
-from sklearn.feature_extraction import DictVectorizer
-
-from app.feature_extractor import FeatureExtractor
-from app.utility import time_stamped
-
 import new_data_curves
-import final_results
 
 if __name__ == '__main__':
     # used to run set of tests on VM

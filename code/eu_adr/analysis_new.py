@@ -1,6 +1,4 @@
 import sqlite3
-import random
-import datetime
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,7 +12,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.grid_search import GridSearchCV
 from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
-from sklearn.ensemble import RandomForestClassifier
 
 from app.feature_extractor import FeatureExtractor
 from app.utility import time_stamped
@@ -411,12 +408,11 @@ def tune_parameters(type):
         # use linear svm for sparse bag of words feature vector
         pipeline = Pipeline([('vectoriser', DictVectorizer()),
                              ('normaliser', preprocessing.Normalizer()),
-                             #('svm', SVC(kernel='poly', cache_size=2000))])
-                             ('svm', SVC(kernel='poly', degree=3, C=1, gamma=2, cache_size=2000))])
+                             ('svm', SVC(kernel='poly', cache_size=2000))])
 
-        #param_grid = [{'svm__C': np.array([1, 10]), 'svm__gamma': np.array([1, 10]),
-                      #'svm__degree': np.array([2, 3, 4, 5]), 'svm__coef0': np.array([1, 2, 3, 4])}]
-        param_grid = [{'svm__coef0': np.array([1, 2, 3, 4])}]
+        # grid search here takes a looong time
+        param_grid = [{'svm__C': np.array([1, 10]), 'svm__gamma': np.array([1, 10]),
+                      'svm__degree': np.array([2, 3, 4, 5]), 'svm__coef0': np.array([1, 2, 3, 4])}]
 
     elif type == 'sigmoid':
         print 'sigmoid'

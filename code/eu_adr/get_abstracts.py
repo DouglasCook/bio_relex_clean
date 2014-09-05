@@ -18,7 +18,7 @@ def scrape_pubmed():
     Download XML version of abstracts used in EU-ADR data set
     """
     basepath = os.path.dirname(__file__)
-    files = os.listdir('/Users/Dug/Imperial/individual_project/data/euadr_corpus')
+    files = os.listdir('../data/euadr_corpus')
 
     for f in files:
         pubmed_id = f.split('.')[0]
@@ -126,7 +126,7 @@ def pubmed_query():
     """
     Perform search of Pubmed database using Entrez and return relevant ids
     """
-    # query taken from eu-adr corpus with the adverse effects part removed
+    # query taken from eu-adr corpus with the adverse effects part removed and data updated
     query = ('("Inorganic Chemicals"[Mesh] OR "Organic Chemicals"[Mesh] OR "Heterocyclic Compounds"[Mesh] '
              'OR "Polycyclic Compounds"[Mesh] OR "Hormones, Hormone Substitutes, and Hormone Antagonists"[Mesh] '
              'OR "Carbohydrates"[Mesh] OR "Lipids"[Mesh] OR "Amino Acids, Peptides, and Proteins"[Mesh] '

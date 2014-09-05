@@ -1,7 +1,6 @@
 import sqlite3
 import operator
 import pickle
-from time import time
 import random
 
 import numpy as np
@@ -11,7 +10,6 @@ from scipy.spatial import distance
 from sklearn import preprocessing
 from sklearn import cross_validation
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.metrics import precision_recall_fscore_support
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
@@ -19,8 +17,8 @@ from sklearn.svm import LinearSVC
 from app.feature_extractor import FeatureExtractor
 from app.utility import time_stamped
 
-# TODO does this make sense? global thing here?
 vec = DictVectorizer()
+# need to specify database to use here
 db_path = 'database/relex.db'
 
 
@@ -62,8 +60,7 @@ def build_pipeline(bag_of_words):
     Set up classfier and extractor here to avoid repetition
     """
     if bag_of_words:
-        clf = Pipeline([#('vectoriser', DictVectorizer()),
-                        ('normaliser', preprocessing.Normalizer(norm='l2')),
+        clf = Pipeline([('normaliser', preprocessing.Normalizer(norm='l2')),
                         ('svm', LinearSVC(dual=True, C=1))])
         # set up extractor using desired features
         extractor = FeatureExtractor(word_gap=False, count_dict=False, phrase_count=False, pos=False, combo=True,
@@ -71,12 +68,12 @@ def build_pipeline(bag_of_words):
         sim = pickle.load(open('pickles/cross_valid_similarities_orig_bag_of_words.p', 'rb'))
 
     else:
-        clf = Pipeline([#('vectoriser', DictVectorizer(sparse=False)),
-                        ('normaliser', preprocessing.Normalizer(norm='l2')),
+        clf = Pipeline([('normaliser', preprocessing.Normalizer(norm='l2')),
                         ('svm', SVC(kernel='rbf', gamma=100, cache_size=2000, C=10))])
         # set up extractor using desired features
         extractor = FeatureExtractor(word_gap=False, count_dict=False, phrase_count=True, pos=True, combo=True,
                                      entity_type=True, word_features=False, bag_of_words=False, bigrams=False)
+        # below must be used to create active features
         #extractor.create_dictionaries(all_records, how_many=5)
         sim = pickle.load(open('pickles/cross_valid_similarities_orig_features_only.p', 'rb'))
 
@@ -117,7 +114,6 @@ def pickle_similarities(which_set, extractor=None):
     else:
         # want to keep records separate for now in this case
         orig, new = load_records(which_set)
-        len_orig = len(orig)
 
     if not extractor:
         # set up extractor using desired features
@@ -194,7 +190,6 @@ def uncertainty_sampling(clf, data, labels, sets, splits, seed, similarities=Non
         break
 
     # base number of samples to use on first split passed in to ensure matches other methods
-    #no_samples = len(next_split)
     no_samples = len(data)/splits
 
     # random can just use cross validation folds passed in
@@ -234,10 +229,9 @@ def uncertainty_sampling(clf, data, labels, sets, splits, seed, similarities=Non
             # if using density sampling divide by similarity
             # so distance is increased for less similar points
             if similarities is not None:
-                # TODO may want to scale weighting between uncertainty and similarity score
                 rest_sim = similarities[np.array(rest_indices)]
-                #dist = np.multiply(dist, rest_sim)
                 dist = np.divide(dist, rest_sim)
+                # the beta parameter for information density sampling can be set here
                 #rest_sim **= 0.8
 
             # zip it all together, order by distance then unzip
