@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Relation Extraction</title>
+    </head>
+
+    <body>
+        <p>Please select a user from the dropdown list below:</p>
+            <form action="/login" method="post">
+                <select name="user">
+                    {% for user in users %}
+                        <option name="{{user[1]}}" value="{{user[0]}}">{{user[1]}}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Log In">
+            </form>
+    </body>
+</html>

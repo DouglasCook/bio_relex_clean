@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Relation Extraction</title>
+        <style type="text/css">
+            #drug {color:blue}
+            #disorder{color:red}
+        </style>
+    </head>
+
+    <body>
+        <!-- highlight the entities based on type -->
+        {% if drug_first %}
+            <p><strong>Sentence</strong>: {{before}}<span id="drug">{{e1}}</span>{{between}}<span id="disorder">{{e2}}</span>{{after}}</p>
+        {% else %}
+            <p><strong>Sentence</strong>: {{before}}<span id="disorder">{{e1}}</span>{{between}}<span id="drug">{{e2}}</span>{{after}}</p>
+        {% endif %}
+
+        <p><strong>Full abstract </strong> available <a href="{{link}}" target="_blank">here</a></p>
+
+        <p>
+            <strong>Classified as </strong>{{classification}}
+        </p>
+        <hr>
+        <p>
+            If the sentence describes use of the <span id="drug">drug</span> for treating the <span id="disorder">indication</span>
+            or the potential for the drug to be used to treat the indication then we consider there to be a true relationship between them.
+        </p>
+
+        <form action="/save" method="post">
+            <p>Which of the below is the <strong>correct</strong> classification?<br>
+                <!-- preselect the class predicted by classifier -->
+                {% if true_check %}
+                    <input type="radio" name="class" value="1" checked = "true"> True<br>
+                    <input type="radio" name="class" value="0"> False<br>
+                {% else %}
+                    <input type="radio" name="class" value="1"> True<br>
+                    <input type="radio" name="class" value="0" checked = "true"> False<br>
+                {% endif %}
+                <input type="radio" name="class" value="3"> Unsure<br>
+                <input type="radio" name="class" value="2"> Incorrect entity recognition<br><br>
+
+                Please add any reasoning behind your decision in the box below if required:<br>
+                <textarea name="reason" rows="4" cols="60"></textarea><br>
+
+                <input type="submit" value="Submit"> Total done so far: {{total_done}}; Remaining to do before retraining: {{to_do}}
+            </p>
+        </form>
+    </body>
+</html>
