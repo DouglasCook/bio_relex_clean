@@ -227,10 +227,8 @@ def cross_validated_scores(clf, extractor, how_many):
     records = load_records()
     data, labels = extractor.generate_features(records)
 
-    # TODO ask about stratified or not stratified
     # set up stratified 10 fold cross validator, use specific random state for proper comparison
     cv = cross_validation.StratifiedKFold(labels, shuffle=True, n_folds=10, random_state=0)
-    #cv = cross_validation.KFold(len(labels), shuffle=True, n_folds=10, random_state=0)
 
     # iterating through the cv gives lists of indices for each fold
     for i, (train, test) in enumerate(cv):
@@ -252,8 +250,6 @@ def cross_validated_scores(clf, extractor, how_many):
 
         scores[i], accuracy[i], auroc[i] = get_scores(clf, train_data, train_labels, test_data, test_labels)
 
-    #print 'precision, recall, f1\n', scores
-    #print 'accuracy\n', accuracy
     return scores, accuracy, auroc
 
 
@@ -308,7 +304,6 @@ def get_scores(clf, train_data, train_labels, test_data, test_labels):
     # evaluate auroc and R, P, F scores
     auroc = metrics.roc_auc_score(test_labels, predicted)
     scores = precision_recall_fscore_support(test_labels, predicted)
-    #print metrics.classification_report(test_labels, predicted)
 
     # ROC STUFF
     #confidence = clf.decision_function(test_data)

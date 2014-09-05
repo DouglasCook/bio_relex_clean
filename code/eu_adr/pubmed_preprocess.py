@@ -106,7 +106,6 @@ def add_to_relations():
                     bef_chunks, bet_chunks, aft_chunks = tagger.pos_and_chunk_tags(row['sentence'], before,
                                                                                        between, e1, e2)
 
-                    # TODO do I need to catch the exceptions here, don't want it to crash?
                     try:
                         cursor.execute('''INSERT INTO relations
                                           VALUES (NULL, ?, NULL, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',

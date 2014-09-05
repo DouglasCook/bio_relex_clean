@@ -13,17 +13,8 @@ import re
 
 config = ConfigParser.ConfigParser()
 config.read('api_login.cfg')
-# TODO ideally get config file working
-#user = config.get('api', 'user')
-#password = config.get('api', 'password')
 user = 'Imperial001'
 password = 'ZAFPILE0BJGND4W8'
-
-'''
-def strip_non_ascii(string):
-    stripped = (c for c in string if 0 < ord(c) < 127)
-    return ''.join(stripped)
-'''
 
 def summariseXml(apiOutput):
     matches = {}
@@ -61,8 +52,6 @@ def runOntologiesSearch(testPhrase):
     # NER SEARCH TO GET MATCHES - Note this is the wsdl type, not name, so starts with lowercase letters
     namedEntityRecognitionInput = client.factory.create('namedEntityRecognitionInput')
     namedEntityRecognitionInput.text = testPhrase
-    # TODO some problem with setting the format here, is it necessary?
-    #namedEntityRecognitionInput.fmt = 'xml'
 
     try:
         output = client.service.searchNer(namedEntityRecognitionInput)
@@ -73,9 +62,6 @@ def runOntologiesSearch(testPhrase):
 
 
 if __name__ == '__main__':
-    #output = runOntologiesSearch(
-        #'sd pfizer gilenya acetominophen ache injection assay phase 1 il8 ace sildenafil or acetaminophen with a phase(2) trial progesterone')
-    # summariseXml(output)
 
     output = runOntologiesSearch('Multiple regression analysis showed that pancreas-to-muscle SI ratios on T1-weighted images and ADC values were independently associated with pancreatic fibrosis (r(2) = 0.66, P < .001) and with activated PSC expression (r(2) = 0.67, P < .001).')
     print summariseXml(output)

@@ -2,6 +2,17 @@ import sqlite3
 import csv
 
 
+def initial_setup(db_name, new=True):
+    """
+    Set up database based on preprocessed sentences from existing corpora
+    """
+    create_tables(db_name, new)
+    populate_sentences(db_name)
+    populate_relations(db_name)
+    populate_users(db_name)
+    clean_biotext_relations(db_name)
+
+
 def create_tables(db_name, new=True):
     """
     Create tables to hold the data
@@ -19,7 +30,7 @@ def create_tables(db_name, new=True):
             cursor.execute('DROP TABLE temp_sentences')
             cursor.execute('DROP TABLE classifier_data')
 
-        # table for sentences themselves, don't know if this is necessary since the tags etc are per relation?
+        # table for sentences themselves
         cursor.execute('''CREATE TABLE sentences(sent_id INTEGER PRIMARY KEY,
                                                  pubmed_id INTEGER,
                                                  sent_num INTEGER,
@@ -98,7 +109,7 @@ def populate_sentences(db_name):
             cursor = db.cursor()
 
             for row in csv_reader:
-                # this isn't a great way to do it but since the spreadsheet is ordered it will work
+                # this isn't a great way to do it, relies on spreadsheet being ordered 
                 if row['pid'] != pid or row['sent_num'] != sent_num:
                     # set the source, this should make it easier to query new records later
                     if eval(row['pid']) < 1000:
@@ -119,7 +130,6 @@ def populate_relations(db_name):
     with open('../csv/tagged_sentences_NEW.csv', 'rb') as f_in:
         csv_reader = csv.DictReader(f_in, delimiter=',')
 
-        # TODO should I just be connecting once here or multiple times?
         with sqlite3.connect(db_name) as db:
             cursor = db.cursor()
 
@@ -165,8 +175,6 @@ def populate_users(db_name):
     with sqlite3.connect(db_name) as db:
         cursor = db.cursor()
 
-        # this deals with the biotext entries, they have artificial pubmed ids all < 1000
-        # biotext annotator id is 1
         cursor.execute('''INSERT INTO users
                                  VALUES (NULL, 'Douglas', 'testing'), (NULL, 'Andrew', 'user');''')
 
@@ -186,17 +194,6 @@ def clean_biotext_relations(db_name):
                                                   OR entity2 LIKE '%therapy%' OR entity2 LIKE '%therapi%' OR entity2
                                                   LIKE  '%surgery%' OR entity2 LIKE '%surgical%' OR entity2 LIKE
                                                   '%treatment%'));''')
-
-
-def initial_setup(db_name, new=True):
-    """
-    Set up database based on preprocessed sentences from existing corpora
-    """
-    create_tables(db_name, new)
-    populate_sentences(db_name)
-    populate_relations(db_name)
-    populate_users(db_name)
-    clean_biotext_relations(db_name)
 
 if __name__ == '__main__':
     #create_tables()

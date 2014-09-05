@@ -39,7 +39,7 @@ def scrape_pubmed():
 
 def file_list():
     """
-    Pickle a list containing all pubmed IDs to be used
+    Pickle a list containing all pubmed IDs corresponding to EU-ADR corpus 
     """
     files = os.listdir('/Users/Dug/Imperial/individual_project/data/euadr_corpus')
     id_list = []
@@ -63,7 +63,7 @@ def set_up_tokenizer():
                                  'pm', 'p.m', 'am', 'a.m', 'mr', 'mrs', 'ms', 'i.e', 'e.g',
                                  # above is from reuters, below for eu-adr specifically
                                  'spp'}
-    # the tokenizer has to be unpickled so better do it once here than every time it is used
+
     return punkt.PunktSentenceTokenizer(punkt_params)
 
 
@@ -71,7 +71,6 @@ def fix_html(text):
     """
     Sort out HTML nonsense
     """
-    # TODO make sure this covers everything
     text = text.replace('&lt;', '<')
     text = text.replace('&gt;', '>')
     text = text.replace('&amp;', '&')
@@ -82,7 +81,6 @@ def xml_to_csv():
     """
     Create one record per text using XML abstracts scraped from PubMed
     """
-    # TODO parse the HTML properly, maybe use beautiful soup?
     basepath = os.path.dirname(__file__)
     # unpickle list of eu-adr ids
     files = pickle.load(open('eu-adr_ids.p', 'rb'))
@@ -103,9 +101,6 @@ def xml_to_csv():
             pubmed_id = tree.findtext('.//PMID')
             title = tree.findtext('.//ArticleTitle')
             nodes = tree.findall('.//AbstractText')
-
-            # abstract = ' '.join([e.text for e in tree.findall('.//AbstractText')])
-            #text = title + ' ' + abstract
 
             # problems arise here if the abstract is in several parts eg method, conclusion etc
             # so need to construct text in this longwinded way instead of nice comprehension above
@@ -143,8 +138,6 @@ def pubmed_query():
     handle = Entrez.esearch(db='pubmed', term=query, retmax=1000)
     record = Entrez.read(handle)
 
-    #print record['Count']
-    #print record['QueryTranslation']
     pickle.dump(record['IdList'], open('pickles/pubmed_records.p', 'wb'))
 
 
@@ -166,7 +159,6 @@ def retrieve_abstracts():
     """
     Bring down abstracts from pubmed based on ids stored in pickle
     """
-    # TODO store all records returned by query and save a pointer to next one to download
     record = pickle.load(open('pickles/pubmed_records_new.p', 'rb'))
     #record = pubmed_query_new()
 
@@ -196,7 +188,6 @@ def medline_to_csv():
         for f in files:
             with open(f, 'rb') as f_in:
                 record = Medline.read(f_in)
-                #print help(record)
                 # use medline parser to extract relevant data from the file
                 pid = record['PMID']
                 text = record['TI'] + ' ' + record['AB']
@@ -212,7 +203,6 @@ def medline_to_db():
     """
     Create one record per text using medline abstracts scraped from PubMed
     """
-    # TODO combine this with NER so only relevant sentences are written to the db
     sentence_splitter = set_up_tokenizer()
     files = set(pickle.load(open('pickles/pubmed_records_new.p', 'rb')))
 

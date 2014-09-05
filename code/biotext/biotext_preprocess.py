@@ -23,10 +23,8 @@ def pos_tags():
                 # split sentence and class tag and strip newline
                 line = line.split('||')
                 line[1] = line[1].rstrip()
-                # repr can be used to see raw string ie include newlines etc
-                # print repr(line[1])
 
-                # only looking at treatment and disease sentences for now, need to get negative examples though...
+                # only looking at treatment and disease sentences for now
                 if line[1] == 'TREAT_FOR_DIS':
                     csv_writer.writerow([line[1], line[0], preprocessing.clean_and_tag_sentence(line[0])])
 
@@ -63,13 +61,10 @@ def entity_extraction():
             for row in csv_reader:
                 # stupid spaces before fullstops
                 sent = row[0].strip('.\s')
-                # seem to be some leading spaces too so want to get rid of them
-                #sent = sent.strip()
 
-                # only want to deal with pairs of entities, this is a simple but probably bad way to do it
+                # only want to deal with pairs of entities
                 diseases = re.findall(r'<DIS>[^<]*', sent)
                 treatments = re.findall(r'<TREAT>[^<]*', sent)
-                # TODO do this properly so can take into account multiple relations in one sentence
                 if len(diseases) == 1 and len(treatments) == 1:
 
                     # if disease comes first

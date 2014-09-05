@@ -45,11 +45,6 @@ class FeatureExtractor():
         feature_vectors = []
         class_vector = []
 
-        # this will now be called from learning curve scipt
-        # create dictionaries if word features are going to be used
-        #if self.word_features:
-            #self.create_dictionaries(records, self.word_features)
-
         for row in records:
             # store class label
             if not no_class:
@@ -104,16 +99,9 @@ class FeatureExtractor():
         if self.word_gap and which_set == 'between':
             f_dict[which_set] = len(tags)
 
-        # TODO see if some sort of word features could be added back in
-        # WORDS - remove numbers here, they should not be considered when finding most common words
-        #       - maybe also want to remove proper nouns?
-        #words = [t[0] for t in tags if not re.match('.?\d', t[0])]
-        # zip up the list with offset list to create bigrams
-        #bigrams = ['-'.join([b[0], b[1]]) for b in zip(words, words[1:])]
-
         # this uses a bag of words representation, no other features
         if self.bag_of_words:
-            # don't take numbers into consideration, is this justifiable?
+            # ignore numbers
             words = [t[0] for t in tags if not re.match('.?\d', t[0])]
             for w in words:
                 f_dict[w] = 1
@@ -132,7 +120,7 @@ class FeatureExtractor():
         if self.pos:
             # POS - remove NONE tags here, seems to improve results slightly, shouldn't use untaggable stuff
             pos = [t[1] for t in tags if t[1] != '-NONE-']
-            # TODO do I want to ignore adjectives and adverbs?
+            # if adjectives and adverbs are to be ignored
             #pos = [t[1] for t in tags if t[1] != '-NONE-' and t[1][0] not in ['J', 'R']]
             # use counting or non counting based on input parameter
             if self.count_dict:
@@ -179,7 +167,6 @@ class FeatureExtractor():
         Create dictionaries for most common verbs and nouns occurring in each part of the sentence
         how_many is the number of words to use unless = -1 in which case use all words
         """
-        # TODO make this function less massive!
         bef_verbs, bef_nouns, bet_verbs, bet_nouns, aft_verbs, aft_nouns = [], [], [], [], [], []
 
         # first create dictionaries of all terms
@@ -286,8 +273,6 @@ class FeatureExtractor():
         true_count = sum(class_vector)
         false_count = len(class_vector) - true_count
 
-        # zip together with the labels
-        # TODO use list comprehension instead
         together = sorted(zip(class_vector, feature_vectors))
         # split into classes
         false = together[:false_count]

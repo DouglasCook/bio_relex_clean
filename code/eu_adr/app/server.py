@@ -12,7 +12,6 @@ from flask import redirect
 import utility
 import retraining
 
-# TODO exception catching / error redirects?
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 db_path = utility.build_filepath(__file__, '../database/relex.db')
@@ -63,7 +62,7 @@ def select_relations(user_id):
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
 
-        # TODO change query dependent on active learning method eg decision function
+        # change query dependent on active learning method eg decision function
         """
         # THIS ORDERS RELATIONS BY THEIR DISTANCE FROM THE SEPARATING HYPERPLANE
         cursor.execute('''SELECT rel_id
@@ -88,22 +87,9 @@ def select_relations(user_id):
                                                          FROM decisions
                                                          WHERE decisions.user_id = ?);''', [user_id])
 
-        """
-        #USE THIS TO SEE WHAT HAS BEEN CLASSIFIED AS TRUE
-        cursor.execute('''SELECT rel_id
-                          FROM relations NATURAL JOIN predictions
-                          WHERE relations.true_rel IS NULL AND
-                                relations.bad_ner = 0 AND
-                                predictions.decision = 1 AND
-                                relations.rel_id NOT IN (SELECT rel_id
-                                                         FROM decisions
-                                                         WHERE decisions.user_id = ?);''', [user_id])
-        """
-
         # create list of relations to classify to iterate through
         rels = [c[0] for c in cursor]
-        # TODO shuffling is one possible strategy, in order is another, distance from support vectors is another
-        # DO NOT shuffle when using active learning!
+        # DO NOT shuffle if using active learning!
         random.shuffle(rels)
         session['rels_to_classify'] = rels
         session['number_rels'] = len(rels)

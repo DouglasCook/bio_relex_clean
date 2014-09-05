@@ -12,7 +12,7 @@ class TaggerChunker(nltk.ChunkParserI):
         """
         The constructor takes a training data set and trains the classifier
         """
-        # conll2000 chunker is more detailed than the treebank one ie includes propositional chunks
+        # conll2000 chunker is more detailed than the treebank one ie includes prepositional chunks
         train_sents = nltk.corpus.conll2000.chunked_sents('train.txt')
         #train_sents = nltk.corpus.treebank_chunk.chunked_sents()
         train_data = [[(t, c) for w, t, c in nltk.chunk.tree2conlltags(sent)] for sent in train_sents]
@@ -34,7 +34,6 @@ class TaggerChunker(nltk.ChunkParserI):
         """
         Return word, pos tag, chunk triples
         """
-        # TODO remove undesirable words or tokens here? also remove CONCLUSION, METHODS etc since they aren't important
         sentence = nltk.word_tokenize(sentence)
 
         # now calculate start and end token indices
@@ -59,7 +58,6 @@ class TaggerChunker(nltk.ChunkParserI):
         Stem the words and remove punctuation
         """
         # now want to remove any punctuation - maybe don't want to remove absolutely all punctuation?
-        # match returns true without needing to match whole string
         chunks = [c for c in chunks if not re.match('\W', c[0])]
 
         # stemming - not sure about the encode decode nonsense...

@@ -74,8 +74,8 @@ class SVMlinear(SVM):
     def tune_parameters(data, labels):
         """
         Tune the parameters using exhaustive grid search
+        This could be integrated into the loop if desired
         """
-        # set cv here, why not
         cv = cross_validation.StratifiedKFold(labels, n_folds=5, shuffle=True)
 
         pipeline = Pipeline([('normaliser', preprocessing.Normalizer()),
@@ -135,6 +135,7 @@ class SVMpoly(SVM):
     def tune_parameters(data, labels):
         """
         Tune the parameters using exhaustive grid search
+        This could be integrated into the loop if desired
         """
         # set cv here, why not
         cv = cross_validation.StratifiedKFold(labels, n_folds=5, shuffle=True)
@@ -156,7 +157,7 @@ class SVMpoly(SVM):
 
 class SVMrbf(SVM):
     """
-    SVM with radial basis function kernel
+    SVM with radial basis function kernef
     """
     def train(self, optimise_params, records=None):
         """
@@ -193,13 +194,14 @@ class SVMrbf(SVM):
     def tune_parameters(data, labels):
         """
         Tune the parameters using exhaustive grid search
+        This could be integrated into the loop if desired
         """
-        # set cv here, why not
         cv = cross_validation.StratifiedKFold(labels, n_folds=5, shuffle=True)
 
         pipeline = Pipeline([('normaliser', preprocessing.Normalizer()),
                              ('svm', SVC(kernel='rbf', cache_size=1000))])
 
+        # dummy values for now
         param_grid = [{'svm__C': [1, 2], 'svm__gamma': [0, 1]}]
         print 'tuning params'
         clf = GridSearchCV(pipeline, param_grid, n_jobs=-1, cv=cv)

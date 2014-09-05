@@ -25,9 +25,6 @@ class RandomForest(Classifier):
 
         data = self.vec.fit_transform(data).toarray()
 
-        # TODO are there any parameters to optimise with random forest?
-        #if optimise_params:
-
         clf = Pipeline([('normaliser', preprocessing.Normalizer()),
                         ('random_forest', RandomForestClassifier(n_estimators=10, max_features='sqrt',
                                                                  bootstrap=False, n_jobs=-1))])

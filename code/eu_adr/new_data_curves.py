@@ -19,7 +19,6 @@ from sklearn.svm import LinearSVC
 from app.feature_extractor import FeatureExtractor
 from app.utility import time_stamped
 
-# TODO does this make sense? global thing here?
 vec = DictVectorizer()
 db_path = 'database/relex.db'
 
@@ -138,7 +137,6 @@ def random_sampling(clf, extractor, orig_records, new_records, train_indices, te
     Folds are picked randomly
     """
     # set up array to hold scores
-    #scores = np.zeros(shape=(splits, 3, 2))
     scores = np.zeros(shape=(splits, 3))
     accuracy = np.zeros(shape=splits)
     # floor division to guarantee correct number of splits
@@ -158,7 +156,6 @@ def random_sampling(clf, extractor, orig_records, new_records, train_indices, te
         # NOW NEED TO TAKE TRAIN FIRST SINCE REST WILL CHANGE
         train_indices = np.append(train_indices, rest_indices[:no_samples])
         rest_indices = rest_indices[no_samples:]
-        #print 'random', len(train_indices)
         scores[i], accuracy[i] = get_scores(clf, extractor, orig_records, new_records, train_indices, test_indices,
                                             word_features=word_features)
 
@@ -178,7 +175,6 @@ def uncertainty_sampling(clf, extractor, orig_records, new_records, train_indice
     Samples the classifier is least confident about predicting are selected first
     """
     # set up array to hold scores
-    #scores = np.zeros(shape=(splits, 3, 2))
     scores = np.zeros(shape=(splits, 3))
     accuracy = np.zeros(shape=splits)
     # floor division to guarantee correct number of splits
@@ -204,13 +200,12 @@ def uncertainty_sampling(clf, extractor, orig_records, new_records, train_indice
         if sim is not None:
             # load relevant similarities
             rest_sim = sim[np.array(rest_indices)]
-            # TODO may want to scale weighting between uncertainty and similarity score
+            # can scale weighting between uncertainty and similarity score here
             # uses beta parameter as a power, linearly scaling will have no effect!
             #rest_sim **= 2
 
             # weigh the confidence based on similarity measure, lower confidence is preferred (since its distance)
             # divide by similarity since cosine similarity = 1 when vectors are the same
-            #confidence = np.multiply(confidence, rest_sim)
             confidence = np.divide(confidence, rest_sim)
 
         # zip it all together and order by confidence
@@ -267,7 +262,6 @@ def pickle_similarities(orig_only, bag_of_words):
     """
     Pickle similarities for newly annotated data only
     """
-    # TODO this is kind of wrong since the similarities will change as the word features are generated per split
     orig_records, new_records = load_records(orig_only)
     all_records = orig_records + new_records
     orig_length = len(orig_records)
@@ -320,6 +314,7 @@ def get_scores(clf, extractor, orig_records, new_records, train_indices, test_in
     test_data, test_labels = extractor.generate_features(test_records)
 
     '''
+    # BELOW FOR SPECIFIC WORD FEATURES
     # need to smash everything together before generating features so same features are generated for each set
     if rest_indices is None:
         train_length = len(train_data)
@@ -397,14 +392,12 @@ def learning_method_comparison(splits, repeats, seed, bag_of_words=0, orig_only=
     samples_per_split = (4*len(new_records)) / (5*splits)
     print 'samples per split', samples_per_split
 
-    # TODO below used if similarities are to be generated each run (so extractor is def correct)
+    # can use below if similarities are to be generated each run (so extractor is def correct)
+    # faster to pickle them in advance though for the sake of nereating results
     #all_records = orig_records + new_records
     #sim = get_similarities(all_records, extractor)
     #sim = sim[len(orig_records):]
 
-    #r_scores = np.zeros(shape=(repeats, splits, 3, 2))
-    #u_scores = np.zeros(shape=(repeats, splits, 3, 2))
-    #d_scores = np.zeros(shape=(repeats, splits, 3, 2))
     r_scores = np.zeros(shape=(repeats, splits, 3))
     u_scores = np.zeros(shape=(repeats, splits, 3))
     d_scores = np.zeros(shape=(repeats, splits, 3))
@@ -446,10 +439,6 @@ def learning_method_comparison(splits, repeats, seed, bag_of_words=0, orig_only=
     r_scores = r_scores.mean(axis=0, dtype=np.float64)
     u_scores = u_scores.mean(axis=0, dtype=np.float64)
     d_scores = d_scores.mean(axis=0, dtype=np.float64)
-    # then true and false
-    #r_scores = r_scores.mean(axis=2, dtype=np.float64)
-    #u_scores = u_scores.mean(axis=2, dtype=np.float64)
-    #d_scores = d_scores.mean(axis=2, dtype=np.float64)
 
     # using numpy slicing to select correct scores
     for i in xrange(3):
@@ -468,24 +457,9 @@ def learning_method_comparison(splits, repeats, seed, bag_of_words=0, orig_only=
 
 if __name__ == '__main__':
     start = time()
-    #learning_method_comparison(repeats=10, splits=5)
     # CANNOT USE SEED ZERO
     learning_method_comparison(repeats=5, splits=5, seed=3, bag_of_words=0, orig_only=False, word_features=0)
     learning_method_comparison(repeats=5, splits=10, seed=3, bag_of_words=0, orig_only=False, word_features=0)
     learning_method_comparison(repeats=5, splits=20, seed=3, bag_of_words=0, orig_only=False, word_features=0)
-    #learning_method_comparison(repeats=10, splits=5, seed=2, bag_of_words=False)
-    #learning_method_comparison(repeats=10, splits=10, seed=2, bag_of_words=False)
-    #learning_method_comparison(repeats=10, splits=20, seed=2, bag_of_words=False)
-    #learning_method_comparison(repeats=20, splits=40)
     end = time()
     print 'running time =', end - start
-
-    '''
-    sim = pickle.load(open('pickles/similarities_bag_of_words.p', 'rb'))
-    sim3 = pickle.load(open('pickles/similarities_features_only.p', 'rb'))
-    pickle_similarities(orig_only=False, bag_of_words=False)
-    pickle_similarities(orig_only=False, bag_of_words=True)
-
-    pickle_similarities(orig_only=True, bag_of_words=False)
-    pickle_similarities(orig_only=True, bag_of_words=True)
-    '''

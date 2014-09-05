@@ -43,7 +43,6 @@ def relations_to_dict():
                     r_dict['rel_type'].append(row[10])
 
         # apparently some of the files contain no relations so need to check that here
-        # can just use 'if object' instead of 'len(object) > 0'
         if r_dict['start1']:
             # now we need to order them by location since the spreadsheet is not in order
             sorter = zip(r_dict['start1'], r_dict['end1'], r_dict['type1'], r_dict['start2'], r_dict['end2'],
@@ -55,7 +54,6 @@ def relations_to_dict():
             relation_dict[pid] = r_dict
 
     # pickle it
-    # print relation_dict['16950808']
     pickle.dump(relation_dict, open('relation_dict.p', 'wb'))
 
 
@@ -63,7 +61,6 @@ def create_output_row(relations, row, i, length):
     """
     Generate row to be written to csv with entities located
     """
-    # TODO sort out the accents
     # can use unidecode module but this creates problems with other sentences eg 16950808 Sjorsen's disease
     sent = unicode(row['text'], 'utf-8')
 
@@ -96,7 +93,6 @@ def create_output_row(relations, row, i, length):
     before = sent[:start1].strip()
     after = sent[end2 + 1:].strip()
 
-    # need to re-encode everything as utf-8 ffs
     return [row['id'],
             row['sent_num'],
             rel,
