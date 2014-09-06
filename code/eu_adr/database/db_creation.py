@@ -196,14 +196,4 @@ def clean_biotext_relations(db_name):
                                                   '%treatment%'));''')
 
 if __name__ == '__main__':
-    #create_tables()
-    #populate_sentences()
-    #populate_relations()
-    #populate_decisions()
-    #initial_setup()
-    #create_temp_sentences()
-    #create_classifier_table()
-    #clean_biotext_relations()
-    #boom()
     initial_setup('relex_new.db')
-    #clean_biotext_relations('relex_new.db')

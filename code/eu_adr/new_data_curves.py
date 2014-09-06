@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from scipy.spatial import distance
 
 from sklearn import preprocessing
-from sklearn import cross_validation
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.pipeline import Pipeline
@@ -69,7 +68,7 @@ def load_records(orig_only):
 
 def build_pipeline(bag_of_words, orig_only):
     """
-    Set up classfier and extractor here to avoid repetition
+    Set up classifier and extractor here to avoid repetition
     """
     if bag_of_words == 1:
         # BAG OF WORDS FEATURES

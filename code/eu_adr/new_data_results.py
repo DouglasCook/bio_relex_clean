@@ -1,13 +1,9 @@
 import sqlite3
-import csv
-import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn import preprocessing
-from sklearn import cross_validation
 from sklearn import metrics
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.metrics import precision_recall_fscore_support
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
@@ -160,4 +156,4 @@ if __name__ == '__main__':
     go(which='word_features')
 
     print 'FEATURES ONLY'
-    go(which='poo')
+    go(which='aaah')

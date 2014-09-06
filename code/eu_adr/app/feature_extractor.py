@@ -3,7 +3,6 @@ import operator
 import nltk
 import random
 import numpy as np
-from sklearn.feature_extraction import DictVectorizer
 
 
 class FeatureExtractor():

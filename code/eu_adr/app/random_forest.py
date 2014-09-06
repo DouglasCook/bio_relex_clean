@@ -4,8 +4,6 @@ from classifier import Classifier
 from sklearn import preprocessing
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
-from sklearn import cross_validation
-from sklearn.grid_search import GridSearchCV
 
 
 class RandomForest(Classifier):
@@ -13,7 +11,7 @@ class RandomForest(Classifier):
     Random forest classifier
     """
 
-    def train(self, optimise_params, records=None):
+    def train(self, records=None):
         """
         Train the model on selected training set
         """

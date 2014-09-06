@@ -9,6 +9,7 @@ def draw_learning_comparison(splits, r_score, u_score, d_score, samples_per_spli
     Plot the different learning methods on same graph
     """
     # if curve being plotted is for original data only
+    # the values used here are dependent on the size of the data sets
     if original:
         orig_size = 0
         num_records = 1201
